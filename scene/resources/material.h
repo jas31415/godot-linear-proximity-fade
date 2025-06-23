@@ -318,6 +318,13 @@ public:
 		EMISSION_OP_MAX
 	};
 
+	enum ProximityFadeMode {
+		PROXIMITY_FADE_DISABLED,
+		PROXIMITY_FADE_RADIAL,
+		PROXIMITY_FADE_LINEAR,
+		PROXIMITY_FADE_MAX
+	};
+
 	enum DistanceFadeMode {
 		DISTANCE_FADE_DISABLED,
 		DISTANCE_FADE_PIXEL_ALPHA,
@@ -372,6 +379,7 @@ private:
 		uint64_t roughness_channel : get_num_bits(TEXTURE_CHANNEL_MAX - 1);
 		uint64_t emission_op : get_num_bits(EMISSION_OP_MAX - 1);
 		uint64_t distance_fade : get_num_bits(DISTANCE_FADE_MAX - 1);
+		uint64_t proximity_fade_mode : get_num_bits(PROXIMITY_FADE_MAX - 1);
 
 		// stencil
 		uint64_t stencil_mode : get_num_bits(STENCIL_MODE_MAX - 1);
@@ -434,6 +442,7 @@ private:
 		mk.billboard_mode = billboard_mode;
 		mk.deep_parallax = deep_parallax;
 		mk.grow = grow_enabled;
+		mk.proximity_fade_mode = proximity_fade_mode;
 		mk.proximity_fade = proximity_fade_enabled;
 		mk.distance_fade = distance_fade;
 		mk.emission_op = emission_op;
@@ -587,6 +596,7 @@ private:
 	bool heightmap_parallax_flip_tangent = false;
 	bool heightmap_parallax_flip_binormal = false;
 
+	ProximityFadeMode proximity_fade_mode = PROXIMITY_FADE_DISABLED;
 	bool proximity_fade_enabled = false;
 	float proximity_fade_distance = 0.0f;
 
@@ -816,6 +826,9 @@ public:
 
 	void set_on_top_of_alpha();
 
+	void set_proximity_fade_mode(ProximityFadeMode p_mode);
+	ProximityFadeMode get_proximity_fade_mode() const;
+
 	void set_proximity_fade_enabled(bool p_enable);
 	bool is_proximity_fade_enabled() const;
 
@@ -905,6 +918,7 @@ VARIANT_ENUM_CAST(BaseMaterial3D::BillboardMode)
 VARIANT_ENUM_CAST(BaseMaterial3D::TextureChannel)
 VARIANT_ENUM_CAST(BaseMaterial3D::EmissionOperator)
 VARIANT_ENUM_CAST(BaseMaterial3D::DistanceFadeMode)
+VARIANT_ENUM_CAST(BaseMaterial3D::ProximityFadeMode)
 VARIANT_ENUM_CAST(BaseMaterial3D::StencilMode)
 VARIANT_ENUM_CAST(BaseMaterial3D::StencilFlags)
 VARIANT_ENUM_CAST(BaseMaterial3D::StencilCompare)

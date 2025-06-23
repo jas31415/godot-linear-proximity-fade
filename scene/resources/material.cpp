@@ -3057,6 +3057,16 @@ void BaseMaterial3D::set_on_top_of_alpha() {
 	set_flag(FLAG_DISABLE_DEPTH_TEST, true);
 }
 
+void BaseMaterial3D::set_proximity_fade_mode(ProximityFadeMode p_mode) {
+	proximity_fade_mode = p_mode;
+	_queue_shader_change();
+	notify_property_list_changed();
+}
+
+BaseMaterial3D::ProximityFadeMode BaseMaterial3D::get_proximity_fade_mode() const {
+	return proximity_fade_mode;
+}
+
 void BaseMaterial3D::set_proximity_fade_enabled(bool p_enable) {
 	proximity_fade_enabled = p_enable;
 	_queue_shader_change();
@@ -3518,6 +3528,9 @@ void BaseMaterial3D::_bind_methods() {
 	ClassDB::bind_method(D_METHOD("set_refraction_texture_channel", "channel"), &BaseMaterial3D::set_refraction_texture_channel);
 	ClassDB::bind_method(D_METHOD("get_refraction_texture_channel"), &BaseMaterial3D::get_refraction_texture_channel);
 
+	ClassDB::bind_method(D_METHOD("set_proximity_fade_mode", "mode"), &BaseMaterial3D::set_proximity_fade_mode);
+	ClassDB::bind_method(D_METHOD("get_proximity_fade_mode"), &BaseMaterial3D::get_proximity_fade_mode);
+
 	ClassDB::bind_method(D_METHOD("set_proximity_fade_enabled", "enabled"), &BaseMaterial3D::set_proximity_fade_enabled);
 	ClassDB::bind_method(D_METHOD("is_proximity_fade_enabled"), &BaseMaterial3D::is_proximity_fade_enabled);
 
@@ -3738,6 +3751,7 @@ void BaseMaterial3D::_bind_methods() {
 	ADD_PROPERTYI(PropertyInfo(Variant::BOOL, "use_fov_override"), "set_flag", "get_flag", FLAG_USE_FOV_OVERRIDE);
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "fov_override", PROPERTY_HINT_RANGE, "1,179,0.1,degrees"), "set_fov_override", "get_fov_override");
 	ADD_GROUP("Proximity Fade", "proximity_fade_");
+	ADD_PROPERTY(PropertyInfo(Variant::INT, "proximity_fade_mode", PROPERTY_HINT_ENUM, "Disabled,Radial,Linear"), "set_proximity_fade_mode", "get_proximity_fade_mode");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "proximity_fade_enabled"), "set_proximity_fade_enabled", "is_proximity_fade_enabled");
 	ADD_PROPERTY(PropertyInfo(Variant::FLOAT, "proximity_fade_distance", PROPERTY_HINT_RANGE, "0.01,4096,0.01,suffix:m"), "set_proximity_fade_distance", "get_proximity_fade_distance");
 
@@ -3889,6 +3903,10 @@ void BaseMaterial3D::_bind_methods() {
 	BIND_ENUM_CONSTANT(EMISSION_OP_ADD);
 	BIND_ENUM_CONSTANT(EMISSION_OP_MULTIPLY);
 
+	BIND_ENUM_CONSTANT(PROXIMITY_FADE_DISABLED);
+	BIND_ENUM_CONSTANT(PROXIMITY_FADE_RADIAL);
+	BIND_ENUM_CONSTANT(PROXIMITY_FADE_LINEAR);
+
 	BIND_ENUM_CONSTANT(DISTANCE_FADE_DISABLED);
 	BIND_ENUM_CONSTANT(DISTANCE_FADE_PIXEL_ALPHA);
 	BIND_ENUM_CONSTANT(DISTANCE_FADE_PIXEL_DITHER);
@@ -3955,6 +3973,7 @@ BaseMaterial3D::BaseMaterial3D(bool p_orm) :
 	set_alpha_hash_scale(1.0);
 	set_alpha_antialiasing_edge(0.3);
 
+	set_proximity_fade_mode(PROXIMITY_FADE_DISABLED);
 	set_proximity_fade_distance(1);
 	set_distance_fade_min_distance(0);
 	set_distance_fade_max_distance(10);
